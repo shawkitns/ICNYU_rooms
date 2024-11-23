@@ -8,18 +8,118 @@
 <body>
     <h1>This is a NYU test website</h1>
     <h2>Friday Prayer Rooms capacity live updates</h2>
+   
 
     <br>
-    <h3>Main Hall</h3>
+    <!-- <h3>Main Hall</h3>
     <h3>Current status: Closed</h3>
+    <div id="MainHall_container">
+        <input placeholder="Count" type="number" id="count"/>
+
+    </div>
 
     <br>
     <h3>Overflow Room 1 (Room 475)</h3>
     <h3>Current status: Open</h3>
+    <div id="of1_container">
+        <input placeholder="Count" type="number" id="of1_count"/>
+
+    </div>
 
     <br>
     <h3>Overflow Room 2 (Room 476)</h3>
     <h3>Current status: Open</h3>
+    <div id="of2_container">
+        <input placeholder="Count" type="number" id="of2_count"/>
+
+    </div> -->
+
+<div id="roomList"></div>
 
 </body>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    // import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    // import {
+    //   getFirestore,
+    //   collection,
+    //   doc,
+    // } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+  
+  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getFirestore, collection, doc,addDoc,onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDTmDgQE2LCrXechmOyCeCkgO-PSc8hbz0",
+      authDomain: "icnyurooms.firebaseapp.com",
+      projectId: "icnyurooms",
+      storageBucket: "icnyurooms.firebasestorage.app",
+      messagingSenderId: "346690092254",
+      appId: "1:346690092254:web:466c12acd7946e5f8cd64f",
+      measurementId: "G-RLC2DQ3055"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    // const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+// Sample function to check Firestore connection
+// async function addRoomData() {
+//     try {
+//         // Example: Adding data to Firestore
+//         const docRef = await addDoc(collection(db, "rooms"), {
+//             room_name: "Carnegie Hall",
+//             room_status: "Open",
+//             room_count: 45
+//         });
+//         console.log("Document written with ID: ", docRef.id);
+//     } catch (e) {
+//         console.error("Error adding document: ", e);
+//     }
+// }
+
+// // Call the function to test Firestore connection (optional)
+// addRoomData();
+
+  // Real-time listener to get updates from the Firestore "rooms" collection
+  const roomListContainer = document.getElementById('roomList');
+
+// Firestore collection reference
+const roomsCollectionRef = collection(db, "rooms");
+
+// Set up a real-time listener to get the room data
+onSnapshot(roomsCollectionRef, (querySnapshot) => {
+    // Clear the room list container before adding new data
+    roomListContainer.innerHTML = '';
+
+    // Loop through the documents and update the page in real-time
+    querySnapshot.forEach((doc) => {
+        const roomData = doc.data();
+        const room_name = roomData.room_name;
+        const room_count = roomData.room_count;
+        const room_status = roomData.room_status;
+
+        // Create a new element to display room details
+        const roomElement = document.createElement('div');
+        roomElement.classList.add('room-item');
+        roomElement.innerHTML = `
+            <h3>${room_name}</h3>
+            <p>Status: ${room_status}</p>
+            <p>Count: ${room_count}</p>
+        `;
+
+        // Append the new room element to the room list container
+        roomListContainer.appendChild(roomElement);
+    });
+});
+  
+
+
+  </script>
+
+<script src="index.js"></script>
+
 </html>
