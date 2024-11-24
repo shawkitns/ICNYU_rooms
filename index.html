@@ -2,12 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="styles.css">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-    <title>Document</title>
+    <title>Islamic Center @NYU Prayer Capacity Live Updates</title>
 </head>
 <body>
-    <h1>This is a NYU test website</h1>
-    <h2>Friday Prayer Rooms capacity live updates</h2>
+    <header>
+        <img src="/assets/icnyu-logo_white.png"/>
+    </header>
+    <span class="Title-text">  <h2>Prayer Rooms Capacity Live Updates</h2></span>
    
 
     <br>
@@ -101,14 +104,44 @@ onSnapshot(roomsCollectionRef, (querySnapshot) => {
         const room_name = roomData.room_name;
         const room_count = roomData.room_count;
         const room_status = roomData.room_status;
+        const room_capacity = roomData.room_capacity;
+
+       // Calculate the progress as a percentage
+       const progressPercentage = (room_count / room_capacity) * 100;
+        console.log(`Room Name: ${room_name}, Progress: ${progressPercentage}%`);
+
+       // Determine new room status based on progress
+       let updatedRoomStatus = room_status;  // Create a new variable for updated status
+        if (progressPercentage >= 100) {
+            updatedRoomStatus = 'Closed';  // Update to 'Closed' if full
+        }
+
+        // Set the background color based on updatedRoomStatus
+        let statusColor = '';
+        if (updatedRoomStatus === 'Open') {
+            statusColor = '#BCFFBE'; // Light green color for Open
+        } else if (updatedRoomStatus === 'Closed') {
+            statusColor = '#FFC6BC'; // Light red color for Closed
+        } else {
+            statusColor = '#BCFFBE'; // Default green if status is anything else
+        }
 
         // Create a new element to display room details
         const roomElement = document.createElement('div');
         roomElement.classList.add('room-item');
         roomElement.innerHTML = `
-            <h3>${room_name}</h3>
-            <p>Status: ${room_status}</p>
-            <p>Count: ${room_count}</p>
+            <div class="container">
+                <h3>${room_name}</h3>
+                <div class="status-box" style="background-color: ${statusColor};"><h3>${updatedRoomStatus}</h3></div>
+            </div>
+            <h2><span class="number-light">${room_count}</span>/${room_capacity}</h2>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 100%;">
+                    <div class="progress-fill" style="width: ${progressPercentage}%; background-color: ${progressPercentage === 100 ? '#FFC6BC' : '#6605B6'};"></div>
+                </div>
+            </div>
         `;
 
         // Append the new room element to the room list container
